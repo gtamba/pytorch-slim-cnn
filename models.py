@@ -79,17 +79,17 @@ class Slim(nn.Module):
     return self.expand3_dw(sse2_out)
 
 
-class SlimCNN(nn.Module):
-  def __init__(self, filter_count_values=[16,32,48,64], initial_conv_filters=96, num_classes=40, depth_multiplier=1):
+class SlimNet(nn.Module):
+  def __init__(self, filter_count_values=[16,32,48,64], initial_conv=[96,7,2], num_classes=40, depth_multiplier=1):
     super().__init__()
     
     #Store architecture hyper_params for model persistence / loading
-    self.hyper_params = {"filter_count_values": filter_count_values, "initial_conv_filters": initial_conv_filters, "num_classes": num_classes, "depth_multiplier": depth_multiplier}
+    self.hyper_params = locals()
 
-    self.conv1 = conv_2d(3, initial_conv_filters, 7, stride=2)
+    self.conv1 = conv_2d(3, initial_conv[0], initial_conv[1], stride=initial_conv[2])
     self.max_pool1 = nn.MaxPool2d(3,2)
     
-    self.slim1 = Slim(initial_conv_filters, filter_count_values[0])
+    self.slim1 = Slim(initial_conv[0], filter_count_values[0])
     self.max_pool2 = nn.MaxPool2d(3,2)
     
     self.slim2 = Slim(filter_count_values[0] * 3, filter_count_values[1])
@@ -128,7 +128,7 @@ class SlimCNN(nn.Module):
   def load_pretrained(path, optimizer=None, scheduler=None):
     checkpoint = torch.load(path)
     hyper_params = checkpoint['hyper_params']
-    model = SlimCNN(hyper_params['filter_count_values'], hyper_params['initial_conv_filters'], hyper_params['num_classes'], hyper_params['depth_multiplier'])
+    model = SlimNet(**hyper_params)
     model.load_state_dict(checkpoint['model_state_dict'])
 
     if optimizer is not None:

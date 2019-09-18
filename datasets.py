@@ -2,7 +2,7 @@ import torch
 from torchvision import transforms
 from torch.utils.data import Dataset
 from PIL import Image
-import os
+from pathlib import Path
 import pandas as pd
 
 
@@ -35,7 +35,7 @@ class CelebADataset(Dataset):
 
     def __getitem__(self, index):
         file_name = self.labels.iloc[index, :]['image_id']
-        x = self.__load_image__(os.path.join(self.image_folder, file_name))
+        x = self.__load_image__(Path(self.image_folder) / file_name)
         y = torch.FloatTensor(list(map(lambda x: max(x, 0), list(
             self.labels.iloc[index, :].drop(['image_id'])))))
 
