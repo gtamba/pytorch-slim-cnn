@@ -39,10 +39,10 @@ Alternatively, the argument you pass as --data_dir in the train script should be
   --conv_filters                INT     Number of initial conv filters                    Default is 20.
   --conv_filter_size            INT     Initial conv filter size.                         Default is 7.
   --conv_filter_stride          INT     Initial conv filter stride.                       Default is 2.  
-  --filter_counts               INT     Filter counts for the Slim modules                Default is 20.
+  --filter_counts               INT     List of Filter counts for the Slim modules        Default is 16 32 48 64.
   --depth_multiplier            INT     Depth level for separable depthwise convolution   Default is 1.
-  --num_classes                 INT     Number of neurons in attention.                   Default is 20.  
-  --num_workers                 INT     Number of threads for dataloading                 Default is 8.
+  --num_classes                 INT     Number of class labels        .                   Default is 40.  
+  --num_workers                 INT     Number of threads for dataloading                 Default is 2.
   --weight_decay                FLOAT   Weight decay of Adam.                             Default is 0.0001.
   --learning_rate               FLOAT   Adam learning rate.                               Default is 0.0001.
   --decay_lr_every              FLOAT   Frequency to decay learning rate                  Default is 0
@@ -52,12 +52,23 @@ Alternatively, the argument you pass as --data_dir in the train script should be
 
 ### Examples
 ```
+git clone https://github.com/gtamba/pytorch-slim-cnn & cd pytorch-slim-cnn
+```
+
+(Optional/Recommended: Setup your desired virtual environment using virtualenv or conda)
+```
+pip install -r requirements.txt
+mkdir checkpoints
+```
+```
 python train.py --num_epochs 6 --save_every 2 --batch_size 256
 ```
 
 ### TODO
 
-Inference / Evaluation
-Pretrained model
-Notebooks
+##### Inference / Evaluation
+
+##### Pretrained model
+
+##### Notebooks
 
