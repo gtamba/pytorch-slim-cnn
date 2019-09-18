@@ -103,21 +103,17 @@ for e in range(epochs):
     total_validation = 0
     correct_train = 0
     correct_validation = 0
-    print("here")
 
     for batch_idx, (images, labels) in enumerate(train_loader):
         with torch.set_grad_enabled(True):
             model.train()
             optimizer.zero_grad()
-            print("here")
             images, labels = images.to(device), labels.to(device)
             logits = model(images)
             loss = criterion(logits, labels)
             loss.backward()
-            print("here")
 
             optimizer.step()
-            print("here")
         
         running_loss += loss.item()
         

@@ -27,6 +27,10 @@ def init_weights(m):
         torch.nn.init.xavier_uniform_(m.weight)
         if type(m) == nn.Linear:
             m.bias.data.fill_(0.01)
+
+# hacky convenience function to turn a list of values into a dictionary indexed by variable name
+def zip_params(filter_count_values, initial_conv, num_classes, depth_multiplier):
+  return locals()
         
 # Network Definition
 
@@ -84,7 +88,7 @@ class SlimNet(nn.Module):
     super().__init__()
     
     #Store architecture hyper_params for model persistence / loading
-    self.hyper_params = locals()
+    self.hyper_params = zip_params(filter_count_values, initial_conv, num_classes, depth_multiplier)
 
     self.conv1 = conv_2d(3, initial_conv[0], initial_conv[1], stride=initial_conv[2])
     self.max_pool1 = nn.MaxPool2d(3,2)
