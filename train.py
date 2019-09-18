@@ -12,6 +12,7 @@ import sys
 
 parser = argparse.ArgumentParser(
 formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+
 # Data and model checkpoints directories
 parser.add_argument('--data_dir', type=str, default='data',
 	help='Data directory containing a folder img_align_celeba with cropped images, and the csv files list_attr_celeba.csv, list_eval_partition.csv')
@@ -19,6 +20,7 @@ parser.add_argument('--save_dir', type=str, default='checkpoints',
 	help='Directory to store models and optimizer states')
 parser.add_argument('--save_every', type=int, default=10,
 	help='Save frequency. Number of passes between checkpoints of the model.')
+parser.add_argument('--resume_checkpoint', dest='resume', action='store_true')
 
 # Model Specifications
 parser.add_argument('--conv_filters', type=int, default=96,
@@ -78,10 +80,9 @@ validation_loader = torch.utils.data.DataLoader(validation_dataset, batch_size=a
 initial_conv = [args.conv_filters, args.conv_filter_size, args.conv_stride]
 
 model = SlimNet(filter_count_values=args.filter_counts, initial_conv=initial_conv, num_classes=args.num_classes, depth_multiplier=args.depth_multiplier)
-criterion = nn.BCEWithLogitsLoss()
 optimizer = optim.Adam(model.parameters(), lr=args.learning_rate, weight_decay=args.weight_decay)
-
 scheduler = None if args.decay_lr_every == 0 else optim.lr_scheduler.StepLR(optimizer, step_size=args.decay_lr_every, gamma=args.lr_decay)
+criterion = nn.BCEWithLogitsLoss()
 
 # Push to GPU
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
@@ -142,14 +143,24 @@ for e in range(epochs):
     validation_accuracies.append(100 * correct_validation / total_validation)
     training_losses.append(running_loss/len(train_loader))
     validation_losses.append(running_val_loss/len(validation_loader))
-   
+    
+    # print('{{"metric": "Training Loss", "value": {}, "epoch": {}}}'.format(
+    #     running_loss/len(train_loader), e))
+    # print('{{"metric": "Validation Loss", "value": {}, "epoch": {}}}'.format(
+    #     running_val_loss/len(validation_loader), e))
+    # print('{{"metric": "Training Accuracy", "value": {}, "epoch": {}}}'.format(
+    #     100 * correct_train / total_train, e))
+    # print('{{"metric": "Validation Accuracy", "value": {}, "epoch": {}}}'.format(
+    #     100 * correct_validation / total_validation, e))
+
+
     print(f"Training Loss : {running_loss/len(train_loader)}")
     print(f"Validation Loss : {running_val_loss/len(validation_loader)}")
     print(f"Training Accuracy : {100 * correct_train / total_train}")
     print(f"Validation Accuracy : {100 * correct_validation / total_validation}")
     
     if (e + 1) % args.save_every == 0:
-        model.save(f"model_{e+1}.pth", optimizer, scheduler)
+        model.save(Path(args.save_dir) / f"model_{e+1}.pth", optimizer, scheduler)
 
 # Save loss trends
 
