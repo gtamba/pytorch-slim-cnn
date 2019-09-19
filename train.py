@@ -1,4 +1,4 @@
-from models import SlimNet
+from slimnet import SlimNet
 from datasets import CelebADataset
 import torch
 from torch import nn
