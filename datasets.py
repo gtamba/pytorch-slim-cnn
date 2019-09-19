@@ -7,7 +7,7 @@ import pandas as pd
 
 
 class CelebADataset(Dataset):
-    def __init__(self, image_folder='/kaggle/input/img_align_celeba/img_align_celeba', labels='/kaggle/input/list_attr_celeba.csv', validation_index='/kaggle/input/list_eval_partition.csv', transform=None, target_transform=None, split='train'):
+    def __init__(self, image_folder='/kaggle/input/celeba-dataset/img_align_celeba/img_align_celeba', labels='/kaggle/input/celeba-dataset/list_attr_celeba.csv', validation_index='/kaggle/input/celeba-dataset/list_eval_partition.csv', transform=None, target_transform=None, split='train'):
         super(CelebADataset, self).__init__()
 
         validation = pd.read_csv(validation_index)

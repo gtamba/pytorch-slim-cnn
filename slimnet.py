@@ -57,7 +57,10 @@ class SlimNet(nn.Module):
 
   @staticmethod
   def load_pretrained(path, optimizer=None, scheduler=None):
-    checkpoint = torch.load(path)
+    if torch.cuda.is_available():
+      checkpoint = torch.load(path)
+    else:
+      checkpoint = torch.load(path, map_location='cpu')
     hyper_params = checkpoint['hyper_params']
     model = SlimNet(**hyper_params)
     model.load_state_dict(checkpoint['model_state_dict'])
