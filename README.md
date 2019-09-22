@@ -31,8 +31,8 @@ look for the dataset in the following format in the current working directory:
 ```
 data/list_attr_celeba.csv
 data/list_eval_partition.csv
-data/img_align_celeba/00001.jpg
-data/img_align_celeba/00002.jpg
+data/img_align_celeba/000001.jpg
+data/img_align_celeba/000002.jpg
 ...
 ```
 
@@ -84,7 +84,7 @@ from torchvision import transforms
 from PIL import Image
 import numpy as np
 
-PATH_TO_IMAGE = '/kaggle/input/celeba-dataset/img_align_celeba/img_align_celeba/000001.jpg'
+PATH_TO_IMAGE = 'data/img_align_celeba/000001.jpg'
 labels = np.array(['5_o_Clock_Shadow', 'Arched_Eyebrows', 'Attractive', 'Bags_Under_Eyes',
        'Bald', 'Bangs', 'Big_Lips', 'Big_Nose', 'Black_Hair', 'Blond_Hair',
        'Blurry', 'Brown_Hair', 'Bushy_Eyebrows', 'Chubby', 'Double_Chin',
@@ -97,7 +97,7 @@ labels = np.array(['5_o_Clock_Shadow', 'Arched_Eyebrows', 'Attractive', 'Bags_Un
 
 # GPU isn't necessary but could definitly speed up, swap the comments to use best hardware available
 #device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-device = 'cpu'
+device = torch.device('cpu')
 
 transform = transforms.Compose([
                                transforms.ToTensor(),
@@ -123,11 +123,12 @@ print(labels[predictions.astype(bool)])
 
 ##### Model Footprint
 #
-Model Size ~ 7 mb
-Number of parameters ~ 0.6 M 
+
+- Model Size ~ 7 mb
+- Number of parameters ~ 0.6 M 
 
 
-##### Simple `timeit` benchmarks (10000 loops)
+##### Simple `timeit` benchmarks (10000 loops including I/O)
 
 - CPU : 0.1598 seconds per image ~ 6.25 frames per second
 - GPU : 0.0753 seconds per image ~ 13.3 frames per second
@@ -144,8 +145,8 @@ todo, see notebook for now for training metric trends
 
 ### Notes
 
--  No data augmentation was used although it would definitely help in performance/robustness
+-  No data augmentation is used right now although it would definitely help in performance/robustness
 -  It is unclear if weight_decay on the Optimizer translates well as L2 regularization to the network weights as opposed to manually adding them to the loss
 -  Number of epochs and batch size were not specified in the paper, tried 20 epochs with batch size 256 which is conservative at best, but the loss trend shows an overfitting inflection around the 20th epoch mark as can be seen in the notebook
--  torchvision now provides an out of the box Dataset API for the CelebA dataset so you don't need a custom one like mine
-
+-  torchvision now provides an out of the box [Dataset](https://github.com/pytorch/vision/blob/master/torchvision/datasets/celeba.py) for the CelebA dataset (which will handle downloading the Dataset) so a minor script edit may save you some file download/organizing
+-  NVIDIA has not yet implemented Depthwise Separable Convolutions in cuDNN so the theoretical speedup won't be visible... yet
