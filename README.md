@@ -100,8 +100,9 @@ labels = np.array(['5_o_Clock_Shadow', 'Arched_Eyebrows', 'Attractive', 'Bags_Un
 device = torch.device('cpu')
 
 transform = transforms.Compose([
-                               transforms.ToTensor(),
-                               transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5)),
+                              transforms.Resize((178,218)),
+                              transforms.ToTensor(),
+                              transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5)),
                            ])
 
 # Make tensor and normalize, add pseudo batch dimension and move to configured device
@@ -128,7 +129,7 @@ print(labels[predictions.astype(bool)])
 - Number of parameters ~ 0.6 M 
 
 
-##### Simple `timeit` benchmarks (10000 loops including I/O)
+##### Simple `timeit` benchmarks (10000 loops including I/O) on NVidia K80
 
 - CPU : 0.1598 seconds per image ~ 6.25 frames per second
 - GPU : 0.0753 seconds per image ~ 13.3 frames per second
